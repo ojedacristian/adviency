@@ -1,20 +1,44 @@
-import { Box, Button, Center, Container, Flex, FormControl, Heading, HStack, Input, Text, VStack } from "@chakra-ui/react"
-import { useState } from "react"
+import { Box, Button, Center, Container, Flex, FormControl, Heading, HStack, Input, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Text, VStack } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
 import './index.css'
 
+
+interface Regalo {
+    name: string,
+    id: number,
+    cantidad: number
+}
+
 export const App = () => {
-    const [regalos, setRegalos] = useState([{ name: 'medias', id: 1 }, { name: 'caramelos', id: 2 }, { name: ' vitel tone', id: 3 }])
-    const [formValue, setFormValue] = useState('')
+    
+    const init = () =>{
+        const strings = localStorage.getItem('regalos') || '[]'
+        const stringsParsed = JSON.parse(strings)
+        console.log(stringsParsed)
+        return stringsParsed
+    }
+
+    const [regalos, setRegalos] = useState<Regalo[]>( ()=> JSON.parse( localStorage.getItem('regalos') || '[]')    )
+    const [cantidad, setCantidad] = useState<number>(1)
+    const [formValue, setFormValue] = useState<string>('')
+    
+    useEffect(() => {
+        const regalosString = JSON.stringify(regalos)
+        localStorage.setItem('regalos', regalosString)
+    }, [regalos])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         setFormValue(e.target.value)
     }
-    const handleAdd = ():void => {
+    const handleNumberChange = (e: number): void => {
+        setCantidad(e)
+    }
+    const handleAdd = (): void => {
         if (!formValue) return;
         const res = regalos.filter(regalo => regalo.name === formValue)
         if (res.length) return;
         const id = new Date().getTime()
-        setRegalos(prev => [...prev, { name: formValue, id }]);
+        setRegalos(prev => [...prev, { name: formValue, id, cantidad }]);
         setFormValue('')
     }
 
@@ -37,7 +61,7 @@ export const App = () => {
                     regalos.map(regalo => (
                         <Flex key={regalo.id} justifyContent='center' alignItems='center'>
                             <Text>
-                                {regalo.name}
+                                {regalo.name} {regalo.cantidad > 1 && `x ${regalo.cantidad}`}
                             </Text>
                             <Button mx={4} bgColor='red.200' onClick={() => handleDelete(regalo.id)}>Eliminar</Button>
                         </Flex>
@@ -52,8 +76,18 @@ export const App = () => {
             </VStack>
             <HStack w='sm'>
                 <FormControl>
-                    <Input placeholder="Nuevo regalo" variant='filled' value={formValue} onChange={(e) => handleChange(e)} />
+                    <Input name="input" placeholder="Nuevo regalo" variant='filled' value={formValue} onChange={(e) => handleChange(e)} />
                 </FormControl>
+                <NumberInput name="numberinput"
+                    value={cantidad}
+                    defaultValue={1}
+                    onChange={(e) => handleNumberChange(Number(e))} min={1} max={10}>
+                    <NumberInputField />
+                    <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                    </NumberInputStepper>
+                </NumberInput>
                 <Button onClick={handleAdd}>Agregar</Button>
             </HStack>
             <Center>
