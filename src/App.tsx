@@ -1,5 +1,6 @@
-import { AspectRatio, Box, Button, Center, Container, Flex, FormControl, Heading, HStack, Image, Input, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Text, VStack } from "@chakra-ui/react"
+import { AspectRatio, Button, Center, Container, Flex, Heading, Image, Text, VStack } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
+import { Modal } from './Modal'
 import './index.css'
 
 
@@ -9,7 +10,7 @@ interface Regalo {
     cantidad: number,
     image: string
 }
-interface GiftForm {
+export interface GiftForm {
     name: string,
     image: string
 }
@@ -22,6 +23,8 @@ export const App = () => {
         name: '',
         image: ''
     })
+
+    const [showModal, setShowModal] = useState<boolean>(false)
 
     useEffect(() => {
         const regalosString = JSON.stringify(regalos)
@@ -88,25 +91,19 @@ export const App = () => {
                     <Text>No hay regalos. Agrega algo</Text>
                 }
             </VStack>
-            <HStack w='sm'>
-                <FormControl>
-                    <Input name="name" placeholder="Nuevo regalo" variant='filled' value={formValue.name} onChange={(e) => handleChange(e)} />
-                </FormControl>
-                <FormControl>
-                    <Input name="image" placeholder="Link de la imagen" value={formValue.image} variant='filled' onChange={(e) => handleChange(e)} />
-                </FormControl>
-                <NumberInput name="numberinput"
-                    value={cantidad}
-                    defaultValue={1}
-                    onChange={(e) => handleNumberChange(Number(e))} min={1} max={10}>
-                    <NumberInputField />
-                    <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                    </NumberInputStepper>
-                </NumberInput>
-                <Button onClick={handleAdd}>Agregar</Button>
-            </HStack>
+            {
+                showModal 
+                &&
+                <Modal 
+                handleAdd={ handleAdd } 
+                handleChange={ handleChange }
+                handleNumberChange= { handleNumberChange}
+                formValue={ formValue } 
+                cantidad = {cantidad} 
+                />}
+                <Center>
+                    <Button onClick={()=> setShowModal(true) }>Agregar nuevo regalo</Button>
+                </Center>
             <Center>
                 <Button w='sm' m='4' bg='red.400' onClick={deleteAll} >Borrar todo</Button>
             </Center>
