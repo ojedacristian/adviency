@@ -1,5 +1,22 @@
-import { Box, Button, Text, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, useDisclosure, VStack, FormControl, Input } from "@chakra-ui/react"
 import { GiftForm } from './App';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  VStack,
+  FormControl,
+  Input
+} from "@chakra-ui/react"
 
 interface ModalProps {
   handleAdd: () => void,
@@ -8,16 +25,18 @@ interface ModalProps {
   handleNumberChange: (e: number) => void,
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
   isOpen: boolean,
-  onClose: () => void
+  onClose: () => void,
+  idToEdit: number,
+  handleEdit: (id:number) => void
 }
 
-export const MyModal = ({ handleAdd, formValue, cantidad, handleNumberChange, handleChange, isOpen, onClose }: ModalProps) => {
+export const MyModal = ({ handleAdd, formValue, cantidad, handleNumberChange, handleChange, isOpen, onClose, idToEdit, handleEdit }: ModalProps) => {
 
-
+  console.log('idToEdit', idToEdit)
   return (
     <>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Agregar nuevo Regalo</ModalHeader>
@@ -31,6 +50,14 @@ export const MyModal = ({ handleAdd, formValue, cantidad, handleNumberChange, ha
                   placeholder="Nuevo regalo"
                   variant='filled'
                   value={formValue.name}
+                  onChange={(e) => handleChange(e)} />
+              </FormControl>
+              <FormControl>
+                <Input
+                  name="destinatario"
+                  placeholder="Destinatario"
+                  variant='filled'
+                  value={formValue.destinatario}
                   onChange={(e) => handleChange(e)} />
               </FormControl>
               <FormControl>
@@ -54,42 +81,14 @@ export const MyModal = ({ handleAdd, formValue, cantidad, handleNumberChange, ha
             <Button variant='ghost' mr={3} onClick={onClose}>
               Cerrar
             </Button>
-            <Button colorScheme='blue' onClick={ handleAdd}>Agregar</Button>
+            {
+              idToEdit == 0
+              ? <Button colorScheme='blue' onClick={handleAdd}>Agregar</Button>
+              : <Button colorScheme='red' onClick={ ()=> handleEdit(idToEdit)}>Editar</Button>
+            }
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
-
-    // <Box
-    // w='full' position='fixed' 
-    // top={0}
-    // bottom={0}
-    // right={0}
-    // left={0}
-    // backgroundColor='gray.700'
-    // >
-
-
-
-    // <VStack >
-    //   <FormControl>
-    //     <Input name="name" placeholder="Nuevo regalo" variant='filled' value={formValue.name} onChange={(e) => handleChange(e)} />
-    //   </FormControl>
-    //   <FormControl>
-    //     <Input name="image" placeholder="Link de la imagen" value={formValue.image} variant='filled' onChange={(e) => handleChange(e)} />
-    //   </FormControl>
-    //   <NumberInput name="numberinput"
-    //     value={cantidad}
-    //     defaultValue={1}
-    //     onChange={(e) => handleNumberChange(Number(e))} min={1} max={10}>
-    //     <NumberInputField />
-    //     <NumberInputStepper>
-    //       <NumberIncrementStepper />
-    //       <NumberDecrementStepper />
-    //     </NumberInputStepper>
-    //   </NumberInput>
-    //   <Button onClick={handleAdd}>Agregar</Button>
-    // </VStack>
-    // </Box>
   )
 }
