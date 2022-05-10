@@ -1,6 +1,6 @@
-import { AspectRatio, Button, Center, Container, Flex, Heading, Image, Text, VStack } from "@chakra-ui/react"
+import { AspectRatio, Button, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { Modal } from './Modal'
+import { MyModal } from './MyModal'
 import './index.css'
 
 
@@ -24,7 +24,8 @@ export const App = () => {
         image: ''
     })
 
-    const [showModal, setShowModal] = useState<boolean>(false)
+    const { isOpen, onOpen, onClose } = useDisclosure()
+
 
     useEffect(() => {
         const regalosString = JSON.stringify(regalos)
@@ -52,6 +53,7 @@ export const App = () => {
             name: '',
             image: ''
         })
+        onClose()
     }
 
     const handleDelete = (id: number): void => {
@@ -91,18 +93,18 @@ export const App = () => {
                     <Text>No hay regalos. Agrega algo</Text>
                 }
             </VStack>
-            {
-                showModal 
-                &&
-                <Modal 
+         
+                <Center>
+                    <Button onClick={onOpen}>Agregar nuevo Regalo</Button>
+                <MyModal 
                 handleAdd={ handleAdd } 
                 handleChange={ handleChange }
                 handleNumberChange= { handleNumberChange}
                 formValue={ formValue } 
-                cantidad = {cantidad} 
-                />}
-                <Center>
-                    <Button onClick={()=> setShowModal(true) }>Agregar nuevo regalo</Button>
+                cantidad = {cantidad}
+                isOpen = { isOpen}
+                onClose = { onClose} 
+                />
                 </Center>
             <Center>
                 <Button w='sm' m='4' bg='red.400' onClick={deleteAll} >Borrar todo</Button>
