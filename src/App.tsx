@@ -110,9 +110,19 @@ export const App = () => {
     const deleteAll = (): void => {
         setRegalos([])
     }
+    const duplicar = (id:number): void => {
+        const regalo = regalos.find(regalo => regalo.id === id);
+        if(regalo){
+            const {name, destinatario, image, precio }= regalo
+            setFormValue({
+                name, destinatario, image, precio
+            })
+            onOpen();
+        }
+    }
 
     useEffect(() => {
-        const res = regalos.reduce( (acc, obj)=> acc + obj.precio, 0 );
+        const res = regalos.reduce( (acc, obj)=> acc + obj.precio * obj.cantidad, 0 );
         setTotal(res)
     
     }, [regalos])
@@ -171,6 +181,7 @@ export const App = () => {
                                     </GridItem>
                                     <GridItem>
                                             <ButtonGroup>
+                                                <Button colorScheme='orange' onClick={ ()=> duplicar(id) }>😽 </Button>
                                                 <Button colorScheme='blue' onClick={() => setEditModal(id)}>Editar</Button>
                                                 <Button mx={4} colorScheme='red' onClick={() => handleDelete(id)}>Eliminar</Button>
                                             </ButtonGroup>
@@ -194,7 +205,7 @@ export const App = () => {
                     }
                 </VStack>
 
-                <Button onClick={openModal} colorScheme='blue' w='md' m='3'>
+                <Button onClick={openModal} colorScheme='blue' p={2} w='sm' m={2}>
                     Agregar nuevo Regalo
                 </Button>
 
@@ -213,7 +224,7 @@ export const App = () => {
                     />
                 </Center>
                 <Center>
-                    <Button w='sm' m='2' colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
+                    <Button w='sm' m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
                 </Center>
             </Container >
 
