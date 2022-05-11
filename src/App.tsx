@@ -1,4 +1,4 @@
-import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem } from '@chakra-ui/react';
+import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack} from '@chakra-ui/react';
 import { useEffect, useState } from "react"
 import { api } from "./api";
 import { MyModal } from "./MyModal";
@@ -9,13 +9,13 @@ interface Regalo {
     cantidad: number,
     image: string,
     destinatario: string,
-    precio: number | undefined
+    precio: number
 }
 export interface GiftForm {
     name: string,
     image: string,
     destinatario: string,
-    precio: number | undefined
+    precio: number
 }
 
 
@@ -27,8 +27,9 @@ export const App = () => {
         name: '',
         image: '',
         destinatario: '',
-        precio: undefined
+        precio: 0
     })
+    const [total, setTotal] = useState(0)
 
     useEffect(() => {
         api.regalos.list().then(regalos => setRegalos(regalos))
@@ -43,7 +44,7 @@ export const App = () => {
 
     useEffect(() => {
         const regalosString = JSON.stringify(regalos)
-        localStorage.setItem('regalos', regalosString)
+        localStorage.setItem('regalos', regalosString);
     }, [regalos])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -68,7 +69,7 @@ export const App = () => {
             name: '',
             image: '',
             destinatario: '',
-            precio: undefined
+            precio: 0
         })
         onClose()
     }
@@ -97,7 +98,7 @@ export const App = () => {
             name: regaloEdit?.name || '',
             destinatario: regaloEdit?.destinatario || '',
             image: regaloEdit?.image || '',
-            precio: regaloEdit?.precio || undefined
+            precio: regaloEdit?.precio || 0
         })
         onOpen()
     }
@@ -109,6 +110,13 @@ export const App = () => {
     const deleteAll = (): void => {
         setRegalos([])
     }
+
+    useEffect(() => {
+        const res = regalos.reduce( (acc, obj)=> acc + obj.precio, 0 );
+        setTotal(res)
+    
+    }, [regalos])
+    
     return (
         <Box
             bg='blue.900'
@@ -175,8 +183,14 @@ export const App = () => {
                     </Grid>
                     {
                         !regalos.length
-                        &&
-                        <Text>No hay regalos. Agrega algo</Text>
+                        ? <Text>No hay regalos. Agrega algo</Text>
+                        : <>
+                            <Divider/>
+                            <Stack direction='row' justifyContent='space-around' width='full' >
+                                <Text fontWeight='bold'>Total</Text>
+                                <Text>$ { total }</Text>
+                            </Stack>
+                        </>
                     }
                 </VStack>
 
