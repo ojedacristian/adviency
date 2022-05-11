@@ -1,8 +1,6 @@
-import { AspectRatio, Badge, Button, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack } from "@chakra-ui/react"
+import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { MyModal } from './MyModal'
-import './index.css'
-
+import { MyModal } from "./MyModal";
 
 interface Regalo {
     name: string,
@@ -24,7 +22,7 @@ export const App = () => {
     const [formValue, setFormValue] = useState<GiftForm>({
         name: '',
         image: '',
-        destinatario:''
+        destinatario: ''
     })
 
     const [idToEdit, setidToEdit] = useState<number>(0);
@@ -66,10 +64,10 @@ export const App = () => {
     const handleDelete = (id: number): void => {
         setRegalos(prev => prev.filter(regalo => regalo.id !== id))
     }
-    const handleEdit = (id:number): void => {
+    const handleEdit = (id: number): void => {
         const newState = regalos.map(regalo => {
             if (regalo.id == id) {
-                return {...formValue, cantidad, id}
+                return { ...formValue, cantidad, id }
             } else {
                 return regalo
             }
@@ -79,16 +77,16 @@ export const App = () => {
     }
 
 
-    const setEditModal = (id: number): void =>{
-        const regaloEdit = regalos.find( regalo => regalo.id === id)
+    const setEditModal = (id: number): void => {
+        const regaloEdit = regalos.find(regalo => regalo.id === id)
         console.log(regaloEdit)
         setidToEdit(id);
         setFormValue({
-            name: regaloEdit?.name || '', 
+            name: regaloEdit?.name || '',
             destinatario: regaloEdit?.destinatario || '',
             image: regaloEdit?.image || ''
         })
-            onOpen()
+        onOpen()
     }
     const openModal = () => {
         setidToEdit(0)
@@ -99,56 +97,89 @@ export const App = () => {
         setRegalos([])
     }
     return (
-        <Container bg='gray.300' w='full' h='100vh' minWidth='container.lg'
+        <Box
+            bg='blue.900'
         >
-            <VStack>
-                <Heading>
-                    Regalos
-                </Heading>
-                {
-                    regalos.map( ({id, name, cantidad, image, destinatario}) => (
-                        <Flex key={id} justifyContent='flex-end' w='md' alignItems='center'>
-                            {
-                             image &&
-                             <AspectRatio ratio={1} minW='100px' m={4} >
-                                 <Image src={image} />
-                             </AspectRatio>   
-                            }
-                            <Text>
-                                {name} {cantidad > 1 && `x ${cantidad}`}
-                            </Text>
-                            <Badge colorScheme='yellow'>{destinatario}</Badge>
-                            <Button colorScheme='blue' onClick={ ()=>setEditModal(id) }>Editar</Button>
-                            <Button mx={4} bgColor='red.200' onClick={() => handleDelete(id)}>Eliminar</Button>
-                        </Flex>
-                    )
-                    )
-                }
-                {
-                    !regalos.length
-                    &&
-                    <Text>No hay regalos. Agrega algo</Text>
-                }
-            </VStack>
-         
+
+            <Container
+                w='full'
+                h='100vh'
+                p={5}
+                minWidth='container.lg'
+                // bg='gray.100'
+                backgroundImage='https://i.pinimg.com/originals/1b/09/08/1b0908830cff074ece983942f803ae07.jpg'
+                centerContent
+            >
+
+                <VStack
+                    bg='white'
+                    spacing={6}
+                    w='lg'
+                    borderRadius={10}
+                    padding={5}
+                >
+                    <Heading>
+                        Regalos
+                    </Heading>
+                    {
+                        regalos.map(({ id, name, cantidad, image, destinatario }) => (
+                            <Flex
+                                key={id}
+                                justify='space-between'
+                                w='md'
+                                alignItems='center'>
+
+                                <AspectRatio ratio={1} minW='100px' m={4} >
+                                    {
+                                        image
+                                            ? <Image src={image} />
+                                            : <Box minW='100px' bg='gray.100'>
+                                                No Image
+                                            </Box>
+                                    }
+                                </AspectRatio>
+
+                                <Text>
+                                    {name} {cantidad > 1 && `x ${cantidad}`}
+                                    <Badge colorScheme='yellow'>{destinatario}</Badge>
+                                </Text>
+                                <ButtonGroup>
+                                    <Button colorScheme='blue' onClick={() => setEditModal(id)}>Editar</Button>
+                                    <Button mx={4} colorScheme='red' onClick={() => handleDelete(id)}>Eliminar</Button>
+                                </ButtonGroup>
+                            </Flex>
+                        )
+                        )
+                    }
+                    {
+                        !regalos.length
+                        &&
+                        <Text>No hay regalos. Agrega algo</Text>
+                    }
+                </VStack>
+
+                <Button onClick={openModal} colorScheme='blue' w='md' m='3'>
+                    Agregar nuevo Regalo
+                </Button>
+
                 <Center>
-                    <Button onClick={ openModal }>Agregar nuevo Regalo</Button>
-                
-                <MyModal 
-                handleAdd={ handleAdd } 
-                handleChange={ handleChange }
-                handleNumberChange= { handleNumberChange}
-                formValue={ formValue } 
-                cantidad = {cantidad}
-                isOpen = { isOpen}
-                onClose = { onClose} 
-                idToEdit = { idToEdit }
-                handleEdit = { handleEdit }
-                />
+                    <MyModal
+                        handleAdd={handleAdd}
+                        handleChange={handleChange}
+                        handleNumberChange={handleNumberChange}
+                        formValue={formValue}
+                        cantidad={cantidad}
+                        isOpen={isOpen}
+                        onClose={onClose}
+                        idToEdit={idToEdit}
+                        handleEdit={handleEdit}
+                    />
                 </Center>
-            <Center>
-                <Button w='sm' m='4' bg='red.400' onClick={deleteAll} >Borrar todo</Button>
-            </Center>
-        </Container >
+                <Center>
+                    <Button w='sm' m='2' colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
+                </Center>
+            </Container >
+
+        </Box>
     )
 }

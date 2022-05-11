@@ -32,7 +32,7 @@ interface ModalProps {
 
 export const MyModal = ({ handleAdd, formValue, cantidad, handleNumberChange, handleChange, isOpen, onClose, idToEdit, handleEdit }: ModalProps) => {
 
-  console.log('idToEdit', idToEdit)
+  console.log(idToEdit)
   return (
     <>
 
@@ -82,9 +82,9 @@ export const MyModal = ({ handleAdd, formValue, cantidad, handleNumberChange, ha
               Cerrar
             </Button>
             {
-              idToEdit == 0
-              ? <Button colorScheme='blue' onClick={handleAdd}>Agregar</Button>
-              : <Button colorScheme='red' onClick={ ()=> handleEdit(idToEdit)}>Editar</Button>
+              idToEdit
+              ? <Button colorScheme='red' onClick={ ()=> handleEdit(idToEdit)}>Editar</Button>
+              : <Button colorScheme='blue' onClick={handleAdd}>Agregar</Button>
             }
           </ModalFooter>
         </ModalContent>
