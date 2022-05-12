@@ -1,4 +1,4 @@
-import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack} from '@chakra-ui/react';
+import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@chakra-ui/react';
 import { useEffect, useState } from "react"
 import { api } from "./api";
 import { MyModal } from "./MyModal";
@@ -40,6 +40,7 @@ export const App = () => {
     const [idToEdit, setidToEdit] = useState<number>(0);
 
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isPreviewOpen, onOpen: onPreviewOpen, onClose: onPreviewClose } = useDisclosure()
 
 
     useEffect(() => {
@@ -110,10 +111,10 @@ export const App = () => {
     const deleteAll = (): void => {
         setRegalos([])
     }
-    const duplicar = (id:number): void => {
+    const duplicar = (id: number): void => {
         const regalo = regalos.find(regalo => regalo.id === id);
-        if(regalo){
-            const {name, destinatario, image, precio }= regalo
+        if (regalo) {
+            const { name, destinatario, image, precio } = regalo
             setFormValue({
                 name, destinatario, image, precio
             })
@@ -122,11 +123,11 @@ export const App = () => {
     }
 
     useEffect(() => {
-        const res = regalos.reduce( (acc, obj)=> acc + obj.precio * obj.cantidad, 0 );
+        const res = regalos.reduce((acc, obj) => acc + obj.precio * obj.cantidad, 0);
         setTotal(res)
-    
+
     }, [regalos])
-    
+
     return (
         <Box
             bg='blue.900'
@@ -180,11 +181,11 @@ export const App = () => {
                                         </Text>
                                     </GridItem>
                                     <GridItem>
-                                            <ButtonGroup>
-                                                <Button colorScheme='orange' onClick={ ()=> duplicar(id) }>😽 </Button>
-                                                <Button colorScheme='blue' onClick={() => setEditModal(id)}>Editar</Button>
-                                                <Button mx={4} colorScheme='red' onClick={() => handleDelete(id)}>Eliminar</Button>
-                                            </ButtonGroup>
+                                        <ButtonGroup>
+                                            <Button colorScheme='orange' onClick={() => duplicar(id)}>😽 </Button>
+                                            <Button colorScheme='blue' onClick={() => setEditModal(id)}>Editar</Button>
+                                            <Button mx={4} colorScheme='red' onClick={() => handleDelete(id)}>Eliminar</Button>
+                                        </ButtonGroup>
                                     </GridItem>
                                 </>
 
@@ -194,14 +195,14 @@ export const App = () => {
                     </Grid>
                     {
                         !regalos.length
-                        ? <Text>No hay regalos. Agrega algo</Text>
-                        : <>
-                            <Divider/>
-                            <Stack direction='row' justifyContent='space-around' width='full' >
-                                <Text fontWeight='bold'>Total</Text>
-                                <Text>$ { total }</Text>
-                            </Stack>
-                        </>
+                            ? <Text>No hay regalos. Agrega algo</Text>
+                            : <>
+                                <Divider />
+                                <Stack direction='row' justifyContent='space-around' width='full' >
+                                    <Text fontWeight='bold'>Total</Text>
+                                    <Text>$ {total}</Text>
+                                </Stack>
+                            </>
                     }
                 </VStack>
 
@@ -222,10 +223,35 @@ export const App = () => {
                         idToEdit={idToEdit}
                         handleEdit={handleEdit}
                     />
+                    <Modal isOpen={isPreviewOpen} onClose={onPreviewClose}>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Lista de compras</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                {
+                                    regalos.map( ({name, image, cantidad, destinatario}) => 
+                                    <Stack flexDirection='row' alignItems='flex-start' justifyContent='space-between' spacing={5} padding={5} >
+                                        <AspectRatio ratio={1} minWidth='100px'>
+                                            <img src={image} />
+                                        </AspectRatio>
+                                        <Text>{ name } ({cantidad})</Text>
+                                        <Badge>{destinatario}</Badge>
+                                    </Stack>
+                                    )
+                                }
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button colorScheme='blue' mr={3} onClick={onPreviewClose}>
+                                    Cerrar
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
                 </Center>
-                <Center>
-                    <Button w='sm' m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
-                </Center>
+                <Button w='sm' m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
+                <Button w='sm' m={2} p={2} colorScheme='gray' onClick={onPreviewOpen}>Previsualizar</Button>
             </Container >
 
         </Box>
