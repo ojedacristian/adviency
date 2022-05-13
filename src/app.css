@@ -1,0 +1,24 @@
+.snowflake {
+    position: fixed;
+    color: white;
+}
+.snow-1 {
+    top: 20%;
+    left:30%;
+}
+.snow-2 {
+    top: 20%;
+    left:60%;
+}
+.snow-3 {
+    top: 45%;
+    right:20%;
+}
+.snow-4 {
+    top: 50%;
+    left:20%;
+}
+.snow-5 {
+    bottom: 30%;
+    left:45%;
+}

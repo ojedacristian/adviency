@@ -1,7 +1,8 @@
-import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter } from '@chakra-ui/react';
-import { useEffect, useState } from "react"
+import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Spacer } from '@chakra-ui/react';
+import { MutableRefObject, useEffect, useRef, useState } from "react"
 import { api } from "./api";
 import { MyModal } from "./MyModal";
+import './app.css'
 
 interface Regalo {
     name: string,
@@ -29,11 +30,12 @@ export const App = () => {
         destinatario: '',
         precio: 0
     })
+    const [onMusic, setOnMusic] = useState<Boolean>(false)
     const [total, setTotal] = useState(0)
 
     useEffect(() => {
         api.regalos.list().then(regalos => setRegalos(regalos))
-
+        audioRef.current.volume = 0.1
     }, [])
 
 
@@ -90,7 +92,6 @@ export const App = () => {
         onClose()
     }
 
-
     const setEditModal = (id: number): void => {
         const regaloEdit = regalos.find(regalo => regalo.id === id)
         console.log(regaloEdit)
@@ -128,10 +129,26 @@ export const App = () => {
 
     }, [regalos])
 
+    const audioRef = useRef<any>(null)
+    const clickPlay = (): void=> {
+        if (audioRef.current !== null) { 
+            onMusic 
+            ? audioRef.current.pause()
+            : audioRef.current.play()
+            setOnMusic(!onMusic)
+        }
+    }
+
     return (
         <Box
             bg='blue.900'
         >
+            <div className='snowflake snow-1'>❄️</div>
+            <div className='snowflake snow-2'>❄️</div>
+            <div className='snowflake snow-3'>❄️</div>
+            <div className='snowflake snow-4'>❄️</div>
+            <div className='snowflake snow-5'>❄️</div>
+
 
             <Container
                 w='full'
@@ -150,9 +167,15 @@ export const App = () => {
                     borderRadius={10}
                     padding={5}
                 >
-                    <Heading>
-                        Regalos
-                    </Heading>
+                    <audio ref={audioRef}>
+                        <source src='./jingle bells.mp3' type='audio/mpeg' />
+                    </audio>
+                    <Box display='flex' justifyContent='space-between' width='50%' alignItems='center' flexDirection='row' >
+                        <Heading>
+                            Regalos
+                        </Heading>
+                        <Button onClick={clickPlay}>🎵</Button>
+                    </Box>
                     <Grid
                         templateColumns='1fr 2fr 1fr'
                     >
@@ -230,14 +253,14 @@ export const App = () => {
                             <ModalCloseButton />
                             <ModalBody>
                                 {
-                                    regalos.map( ({name, image, cantidad, destinatario}) => 
-                                    <Stack flexDirection='row' alignItems='flex-start' justifyContent='space-between' spacing={5} padding={5} >
-                                        <AspectRatio ratio={1} minWidth='100px'>
-                                            <img src={image} />
-                                        </AspectRatio>
-                                        <Text>{ name } ({cantidad})</Text>
-                                        <Badge>{destinatario}</Badge>
-                                    </Stack>
+                                    regalos.map(({ name, image, cantidad, destinatario }) =>
+                                        <Stack flexDirection='row' alignItems='flex-start' justifyContent='space-between' spacing={5} padding={5} >
+                                            <AspectRatio ratio={1} minWidth='100px'>
+                                                <img src={image} />
+                                            </AspectRatio>
+                                            <Text>{name} ({cantidad})</Text>
+                                            <Badge>{destinatario}</Badge>
+                                        </Stack>
                                     )
                                 }
                             </ModalBody>
