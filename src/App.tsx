@@ -1,8 +1,11 @@
-import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Spacer } from '@chakra-ui/react';
+import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Spacer, Progress } from '@chakra-ui/react';
 import { MutableRefObject, useEffect, useRef, useState } from "react"
 import { api } from "./api";
 import { MyModal } from "./MyModal";
 import './app.css'
+import Snowfall from 'react-snowfall'
+
+
 
 interface Regalo {
     name: string,
@@ -31,11 +34,15 @@ export const App = () => {
         precio: 0
     })
     const [onMusic, setOnMusic] = useState<Boolean>(false)
-    const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState<number>(0)
+    const [isLoading, setIsLoading] = useState<Boolean>(true)
 
     useEffect(() => {
-        api.regalos.list().then(regalos => setRegalos(regalos))
-        audioRef.current.volume = 0.1
+        api.regalos.list().then(regalos => {
+            setRegalos(regalos as Regalo[])
+            setIsLoading(false)
+        })
+        audioRef.current.volume = 0.3
     }, [])
 
 
@@ -130,19 +137,22 @@ export const App = () => {
     }, [regalos])
 
     const audioRef = useRef<any>(null)
-    const clickPlay = (): void=> {
-        if (audioRef.current !== null) { 
-            onMusic 
-            ? audioRef.current.pause()
-            : audioRef.current.play()
+    const clickPlay = (): void => {
+        if (audioRef.current !== null) {
+            onMusic
+                ? audioRef.current.pause()
+                : audioRef.current.play()
             setOnMusic(!onMusic)
         }
     }
 
     return (
+
         <Box
             bg='blue.900'
         >
+        <Snowfall/>
+
             <div className='snowflake snow-1'>❄️</div>
             <div className='snowflake snow-2'>❄️</div>
             <div className='snowflake snow-3'>❄️</div>
@@ -176,6 +186,12 @@ export const App = () => {
                         </Heading>
                         <Button onClick={clickPlay}>🎵</Button>
                     </Box>
+                    {
+                        isLoading && <>
+                        <Progress size='xs' isIndeterminate minWidth='xs' height={1} />
+                        <Text>Cargando...</Text>
+                        </>
+                    }
                     <Grid
                         templateColumns='1fr 2fr 1fr'
                     >
