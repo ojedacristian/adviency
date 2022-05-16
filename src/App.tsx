@@ -1,4 +1,4 @@
-import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Spacer, Progress } from '@chakra-ui/react';
+import { AspectRatio, Badge, Box, Button, ButtonGroup, Center, Container, Flex, Heading, Image, Text, useDisclosure, VStack, HStack, Grid, GridItem, Divider, Stack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, Spacer, Progress, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { MutableRefObject, useEffect, useRef, useState } from "react"
 import { api } from "./api";
 import { MyModal } from "./MyModal";
@@ -25,6 +25,10 @@ export interface GiftForm {
 
 export const App = () => {
 
+    const {toggleColorMode} =  useColorMode()
+    const modalColor = useColorModeValue('gray.50', 'gray.800')
+    const bgColor = useColorModeValue('green.800', 'gray.900')
+
     const [regalos, setRegalos] = useState<Regalo[]>([])
     const [cantidad, setCantidad] = useState<number>(1)
     const [formValue, setFormValue] = useState<GiftForm>({
@@ -38,6 +42,7 @@ export const App = () => {
     const [isLoading, setIsLoading] = useState<Boolean>(true)
 
     useEffect(() => {
+        setIsLoading(true)
         api.regalos.list().then(regalos => {
             setRegalos(regalos as Regalo[])
             setIsLoading(false)
@@ -149,9 +154,21 @@ export const App = () => {
     return (
 
         <Box
-            bg='blue.900'
+            bg={ bgColor }
+            
         >
-        <Snowfall/>
+            <Button
+                position='fixed'
+                right={1}
+                top={1}
+                onClick={toggleColorMode}
+            >
+                🌗
+            </Button>
+        <Snowfall
+            // color='white'
+            snowflakeCount={150}
+        />
 
             <div className='snowflake snow-1'>❄️</div>
             <div className='snowflake snow-2'>❄️</div>
@@ -164,23 +181,23 @@ export const App = () => {
                 w='full'
                 h='100vh'
                 p={5}
-                minWidth='container.lg'
+                // minWidth='container.lg'
                 // bg='gray.100'
-                backgroundImage='https://i.pinimg.com/originals/1b/09/08/1b0908830cff074ece983942f803ae07.jpg'
+                // backgroundImage='https://i.pinimg.com/originals/1b/09/08/1b0908830cff074ece983942f803ae07.jpg'
                 centerContent
             >
 
                 <VStack
-                    bg='white'
+                    bg={modalColor}
                     spacing={6}
-                    w='lg'
+                    w={['sm', 'md','lg']}
                     borderRadius={10}
                     padding={5}
                 >
                     <audio ref={audioRef}>
                         <source src='./jingle bells.mp3' type='audio/mpeg' />
                     </audio>
-                    <Box display='flex' justifyContent='space-between' width='50%' alignItems='center' flexDirection='row' >
+                    <Box display='flex' justifyContent='space-between' width='50%' alignItems='center' flexDirection={['column', 'row']} >
                         <Heading>
                             Regalos
                         </Heading>
@@ -193,7 +210,7 @@ export const App = () => {
                         </>
                     }
                     <Grid
-                        templateColumns='1fr 2fr 1fr'
+                        templateColumns={['1fr', null, '1fr 2fr 1fr', ]}
                     >
                         {
                             regalos.map(({ id, name, cantidad, image, destinatario, precio }) => (
@@ -220,11 +237,11 @@ export const App = () => {
                                         </Text>
                                     </GridItem>
                                     <GridItem>
-                                        <ButtonGroup>
-                                            <Button colorScheme='orange' onClick={() => duplicar(id)}>😽 </Button>
-                                            <Button colorScheme='blue' onClick={() => setEditModal(id)}>Editar</Button>
-                                            <Button mx={4} colorScheme='red' onClick={() => handleDelete(id)}>Eliminar</Button>
-                                        </ButtonGroup>
+                                        <Flex direction={'row'} justifyContent='flex-end' flexWrap='wrap' alignItems='center'>
+                                            <Button colorScheme='orange' variant='outline' title='Duplicar producto' m={1} size='sm' onClick={() => duplicar(id)}> 💕 </Button>
+                                            <Button colorScheme='blue' m={1} size='sm' onClick={() => setEditModal(id)}>✏️</Button>
+                                            <Button colorScheme='red' m={1} size='sm' onClick={() => handleDelete(id)}> ❌  </Button>
+                                        </Flex>
                                     </GridItem>
                                 </>
 
@@ -289,6 +306,7 @@ export const App = () => {
                         </ModalContent>
                     </Modal>
                 </Center>
+                <Button onClick={toggleColorMode}>Change color Mode</Button>
                 <Button w='sm' m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
                 <Button w='sm' m={2} p={2} colorScheme='gray' onClick={onPreviewOpen}>Previsualizar</Button>
             </Container >
