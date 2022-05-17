@@ -4,6 +4,7 @@ import { api } from "./api";
 import { MyModal } from "./MyModal";
 import './app.css'
 import Snowfall from 'react-snowfall'
+import { motion } from 'framer-motion';
 
 
 
@@ -25,9 +26,9 @@ export interface GiftForm {
 
 export const App = () => {
 
-    const {toggleColorMode} =  useColorMode()
-    const modalColor = useColorModeValue('gray.50', 'gray.800')
-    const bgColor = useColorModeValue('green.800', 'gray.900')
+    const { toggleColorMode } = useColorMode()
+    const modalColor = useColorModeValue('gray.50', 'blue.800')
+    const bgColor = useColorModeValue('green.700', 'blue.900')
 
     const [regalos, setRegalos] = useState<Regalo[]>([])
     const [cantidad, setCantidad] = useState<number>(1)
@@ -151,11 +152,22 @@ export const App = () => {
         }
     }
 
+    const initial = {
+        opacity: 0,
+        scale: 0,
+        x: -100
+    }
+
+    const animate = {
+        opacity: 1,
+        scale: 1,
+        x: 0
+    }
     return (
 
         <Box
-            bg={ bgColor }
-            
+            bg={bgColor}
+
         >
             <Button
                 position='fixed'
@@ -165,34 +177,33 @@ export const App = () => {
             >
                 🌗
             </Button>
-        <Snowfall
-            // color='white'
-            snowflakeCount={150}
-        />
+            <Snowfall
+                // color='white'
+                snowflakeCount={150}
+            />
 
-            <div className='snowflake snow-1'>❄️</div>
+            {/* <div className='snowflake snow-1'>❄️</div>
             <div className='snowflake snow-2'>❄️</div>
             <div className='snowflake snow-3'>❄️</div>
             <div className='snowflake snow-4'>❄️</div>
-            <div className='snowflake snow-5'>❄️</div>
+            <div className='snowflake snow-5'>❄️</div> */}
 
 
             <Container
                 w='full'
-                h='100vh'
-                p={5}
+                minHeight='100vh'
+                p={[3, 5]}
                 // minWidth='container.lg'
                 // bg='gray.100'
-                // backgroundImage='https://i.pinimg.com/originals/1b/09/08/1b0908830cff074ece983942f803ae07.jpg'
                 centerContent
             >
 
                 <VStack
                     bg={modalColor}
                     spacing={6}
-                    w={['sm', 'md','lg']}
+                    w={['xs','sm', 'md', '2xl']}
                     borderRadius={10}
-                    padding={5}
+                    padding={[2,5]}
                 >
                     <audio ref={audioRef}>
                         <source src='./jingle bells.mp3' type='audio/mpeg' />
@@ -205,18 +216,23 @@ export const App = () => {
                     </Box>
                     {
                         isLoading && <>
-                        <Progress size='xs' isIndeterminate minWidth='xs' height={1} />
-                        <Text>Cargando...</Text>
+                            <Progress size='xs' isIndeterminate minWidth='xs' height={1} />
+                            <Text>Cargando...</Text>
                         </>
                     }
                     <Grid
-                        templateColumns={['1fr', null, '1fr 2fr 1fr', ]}
+                        templateColumns={['1fr', null, '1fr 2fr 1fr',]}
+                        w='full'
                     >
                         {
                             regalos.map(({ id, name, cantidad, image, destinatario, precio }) => (
                                 <>
 
-                                    <GridItem>
+                                    <GridItem
+                                        as={motion.div}
+                                        initial={initial}
+                                        animate={animate}
+                                    >
 
 
                                         <AspectRatio ratio={1} minW='100px' m={4} >
@@ -229,18 +245,36 @@ export const App = () => {
                                             }
                                         </AspectRatio>
                                     </GridItem>
-                                    <GridItem>
+                                    <GridItem
+                                        as={motion.div}
+                                        initial={initial}
+                                        animate={animate}
+                                    >
                                         <Text>
                                             {name} {cantidad > 1 && `x ${cantidad}`}<br />
                                             <Badge colorScheme='yellow'>{destinatario}</Badge><br />
                                             <Badge colorScheme='green'>$ {precio}</Badge>
                                         </Text>
                                     </GridItem>
-                                    <GridItem>
+                                    <GridItem
+                                        as={motion.div}
+                                        initial={initial}
+                                        animate={animate}
+                                    >
                                         <Flex direction={'row'} justifyContent='flex-end' flexWrap='wrap' alignItems='center'>
                                             <Button colorScheme='orange' variant='outline' title='Duplicar producto' m={1} size='sm' onClick={() => duplicar(id)}> 💕 </Button>
-                                            <Button colorScheme='blue' m={1} size='sm' onClick={() => setEditModal(id)}>✏️</Button>
-                                            <Button colorScheme='red' m={1} size='sm' onClick={() => handleDelete(id)}> ❌  </Button>
+                                            <Button colorScheme='blue' m={1} size='sm' onClick={() => setEditModal(id)}>
+                                                <Text>
+                                                    ✏️
+                                                </Text>
+                                            </Button>
+                                            <Button colorScheme='red' m={1} size='sm' onClick={() => handleDelete(id)}>
+                                                <Text 
+                                                // textShadow='0 0 0 red' color='transparent' 
+                                                >
+                                                    ❌
+                                                </Text>
+                                            </Button>
                                         </Flex>
                                     </GridItem>
                                 </>
@@ -262,9 +296,7 @@ export const App = () => {
                     }
                 </VStack>
 
-                <Button onClick={openModal} colorScheme='blue' p={2} w='sm' m={2}>
-                    Agregar nuevo Regalo
-                </Button>
+               
 
                 <Center>
                     <MyModal
@@ -306,9 +338,9 @@ export const App = () => {
                         </ModalContent>
                     </Modal>
                 </Center>
-                <Button onClick={toggleColorMode}>Change color Mode</Button>
-                <Button w='sm' m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
-                <Button w='sm' m={2} p={2} colorScheme='gray' onClick={onPreviewOpen}>Previsualizar</Button>
+                <Button onClick={openModal} colorScheme='blue' p={2} w={['xs', 'sm']} m={2}>Agregar nuevo Regalo</Button>
+                <Button w={['xs', 'sm']} m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
+                <Button w={['xs', 'sm']} m={2} p={2} colorScheme='gray' onClick={onPreviewOpen}>Previsualizar</Button>
             </Container >
 
         </Box>
