@@ -1,4 +1,4 @@
-import { GiftForm } from './App';
+import { GiftForm } from './interfaces/interfaces';
 import {
   Button,
   Modal,
@@ -53,7 +53,6 @@ const regalosAleatorios: GiftForm[] = [
 ]
 export const MyModal = ({ handleAdd, formValue, setFormValue, cantidad, handleNumberChange, handleChange, isOpen, onClose, idToEdit, handleEdit }: ModalProps) => {
 
-  console.log(idToEdit)
   return (
     <>
 

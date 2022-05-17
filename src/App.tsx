@@ -5,24 +5,8 @@ import { MyModal } from "./MyModal";
 import './app.css'
 import Snowfall from 'react-snowfall'
 import { motion } from 'framer-motion';
-
-
-
-interface Regalo {
-    name: string,
-    id: number,
-    cantidad: number,
-    image: string,
-    destinatario: string,
-    precio: number
-}
-export interface GiftForm {
-    name: string,
-    image: string,
-    destinatario: string,
-    precio: number
-}
-
+import { GiftForm, Regalo } from './interfaces/interfaces';
+import { RegaloComponent } from './components/RegaloComponent';
 
 export const App = () => {
 
@@ -152,17 +136,7 @@ export const App = () => {
         }
     }
 
-    const initial = {
-        opacity: 0,
-        scale: 0,
-        x: -100
-    }
 
-    const animate = {
-        opacity: 1,
-        scale: 1,
-        x: 0
-    }
     return (
 
         <Box
@@ -190,7 +164,7 @@ export const App = () => {
 
 
             <Container
-                w='full'
+                w={['xs', 'sm', 'md', '2xl']}
                 minHeight='100vh'
                 p={[3, 5]}
                 // minWidth='container.lg'
@@ -201,18 +175,25 @@ export const App = () => {
                 <VStack
                     bg={modalColor}
                     spacing={6}
-                    w={['xs','sm', 'md', '2xl']}
+                    w={['xs', 'sm', 'md', '2xl']}
                     borderRadius={10}
-                    padding={[2,5]}
+                    padding={[2, 5]}
+                    boxShadow='md'
                 >
                     <audio ref={audioRef}>
                         <source src='./jingle bells.mp3' type='audio/mpeg' />
                     </audio>
-                    <Box display='flex' justifyContent='space-between' width='50%' alignItems='center' flexDirection={['column', 'row']} >
+                    <Box display='flex' justifyContent='space-between' width='100%' alignItems='center' flexDirection={['column', 'row']} >
+                        <div></div>
                         <Heading>
                             Regalos
                         </Heading>
-                        <Button onClick={clickPlay}>🎵</Button>
+                        <Button
+                            variant='ghost'
+                            onClick={clickPlay}
+                            textShadow='0 0 0 gray'
+                            color='transparent'
+                        >🎵</Button>
                     </Box>
                     {
                         isLoading && <>
@@ -223,60 +204,18 @@ export const App = () => {
                     <Grid
                         templateColumns={['1fr', null, '1fr 2fr 1fr',]}
                         w='full'
+
                     >
                         {
-                            regalos.map(({ id, name, cantidad, image, destinatario, precio }) => (
+                            regalos.map((regalo) => (
                                 <>
 
-                                    <GridItem
-                                        as={motion.div}
-                                        initial={initial}
-                                        animate={animate}
-                                    >
-
-
-                                        <AspectRatio ratio={1} minW='100px' m={4} >
-                                            {
-                                                image
-                                                    ? <Image src={image} />
-                                                    : <Box minW='100px' bg='gray.100'>
-                                                        No Image
-                                                    </Box>
-                                            }
-                                        </AspectRatio>
-                                    </GridItem>
-                                    <GridItem
-                                        as={motion.div}
-                                        initial={initial}
-                                        animate={animate}
-                                    >
-                                        <Text>
-                                            {name} {cantidad > 1 && `x ${cantidad}`}<br />
-                                            <Badge colorScheme='yellow'>{destinatario}</Badge><br />
-                                            <Badge colorScheme='green'>$ {precio}</Badge>
-                                        </Text>
-                                    </GridItem>
-                                    <GridItem
-                                        as={motion.div}
-                                        initial={initial}
-                                        animate={animate}
-                                    >
-                                        <Flex direction={'row'} justifyContent='flex-end' flexWrap='wrap' alignItems='center'>
-                                            <Button colorScheme='orange' variant='outline' title='Duplicar producto' m={1} size='sm' onClick={() => duplicar(id)}> 💕 </Button>
-                                            <Button colorScheme='blue' m={1} size='sm' onClick={() => setEditModal(id)}>
-                                                <Text>
-                                                    ✏️
-                                                </Text>
-                                            </Button>
-                                            <Button colorScheme='red' m={1} size='sm' onClick={() => handleDelete(id)}>
-                                                <Text 
-                                                // textShadow='0 0 0 red' color='transparent' 
-                                                >
-                                                    ❌
-                                                </Text>
-                                            </Button>
-                                        </Flex>
-                                    </GridItem>
+                                    <RegaloComponent
+                                        regalo={regalo}
+                                        duplicar={duplicar}
+                                        setEditModal={setEditModal}
+                                        handleDelete={handleDelete}
+                                    />
                                 </>
 
                             )
@@ -296,7 +235,7 @@ export const App = () => {
                     }
                 </VStack>
 
-               
+
 
                 <Center>
                     <MyModal
@@ -338,7 +277,7 @@ export const App = () => {
                         </ModalContent>
                     </Modal>
                 </Center>
-                <Button onClick={openModal} colorScheme='blue' p={2} w={['xs', 'sm']} m={2}>Agregar nuevo Regalo</Button>
+                <Button onClick={openModal} colorScheme='blue' p={2} w={['xs', 'sm']} m={2} >Agregar nuevo Regalo</Button>
                 <Button w={['xs', 'sm']} m={2} p={2} colorScheme='red' onClick={deleteAll} >Borrar todo</Button>
                 <Button w={['xs', 'sm']} m={2} p={2} colorScheme='gray' onClick={onPreviewOpen}>Previsualizar</Button>
             </Container >
